@@ -26,6 +26,7 @@ const Index: React.FC<IndexProps> = ({ spotifyLoginUrl }) => {
             <div>
               <nav className="navbar navbar-laft navbar-custom ">
                 <p>
+                  <h1>la fiesta</h1>
                   <a href="/">
                     <i className="fas fa-chevron-left"></i>Retour
                   </a>
