@@ -23,6 +23,12 @@ const play = (accessToken: string, deviceId: string) => {
   });
 };
 
+// const album = (accessToken: string, deviceId: string) => {
+//   return fetch(`https://api.spotify.com/v1/albums/74ASZWbe4lXaubB36ztrGX/`)
+//     .then((result) => result.json())
+//     .then((json) => console.log(json));
+// };
+
 const pause = (accessToken: string, deviceId: string) => {
   return fetch(`https://api.spotify.com/v1/me/player/pause?device_id=${deviceId}`, {
     method: "PUT",
@@ -30,6 +36,21 @@ const pause = (accessToken: string, deviceId: string) => {
       Authorization: `Bearer ${accessToken}`,
     },
   });
+};
+
+const album = (accessToken: string) => {
+  return fetch(`https://api.spotify.com/v1/albums/5lKlFlReHOLShQKyRv6AL9`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+    .then((res) => {
+      console.log(res);
+      res.json();
+    })
+    .then((result) => console.log(result));
 };
 
 const Player: NextPage<Props> = ({ accessToken }) => {
@@ -67,8 +88,10 @@ const Player: NextPage<Props> = ({ accessToken }) => {
           paused ? play(accessToken, deviceId) : pause(accessToken, deviceId);
         }}
       >
-      {paused ? "play" : "stop"}
+        {paused ? "play" : "stop"}
       </button>
+      <button onClick={() => album(accessToken)}>toto</button>
+      {/* <button onClick={album2}>test</button> */}
     </Layout>
   );
 };
