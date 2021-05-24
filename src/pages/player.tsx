@@ -67,7 +67,7 @@ const Player: NextPage<Props> = ({ accessToken }) => {
           paused ? play(accessToken, deviceId) : pause(accessToken, deviceId);
         }}
       >
-      {paused ? "play" : "stop"}
+        {paused ? "play" : "stop"}
       </button>
     </Layout>
   );
