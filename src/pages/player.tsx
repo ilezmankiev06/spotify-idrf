@@ -48,7 +48,7 @@ const album = (accessToken: string) => {
   })
     .then((res) => {
       console.log(res);
-      res.json();
+      return res.json();
     })
     .then((result) => console.log(result));
 };
