@@ -3,19 +3,21 @@ type Playlists = {
     uri: string;
   };
 };
-const play = (accessToken: string, deviceId: string) => {
-  return fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
+
+let track = "";
+export const play = (accessToken: string, deviceId: string) => {
+  return fetch(`https://api.spotify.com/v1/me/player/play?device_id=${track}`, {
     method: "PUT",
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
     body: JSON.stringify({
-      uris: ["spotify:track:2Foc5Q5nqNiosCNqttzHof"],
+      uris: ["1imMjt1YGNebtrtTAprKV7"],
     }),
   });
 };
 
-const pause = (accessToken: string, deviceId: string) => {
+export const pause = (accessToken: string, deviceId: string) => {
   return fetch(`https://api.spotify.com/v1/me/player/pause?device_id=${deviceId}`, {
     method: "PUT",
     headers: {
@@ -24,7 +26,7 @@ const pause = (accessToken: string, deviceId: string) => {
   });
 };
 
-const album = (accessToken: string) => {
+export const album = (accessToken: string) => {
   return fetch(`https://api.spotify.com/v1/tracks/0DiWol3AO6WpXZgp0goxAV`, {
     method: "GET",
     headers: {
@@ -34,8 +36,8 @@ const album = (accessToken: string) => {
   }).then((res) => res.json());
 };
 
-const getPlaylists = (accessToken: string) => {
-  return fetch("https://api.spotify.com/v1/playlists/3xVCqaHzZ2E67edgUI9w6I/tracks", {
+const getPlaylists = async (accessToken: string) => {
+  return await fetch("https://api.spotify.com/v1/playlists/3xVCqaHzZ2E67edgUI9w6I/tracks", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -44,12 +46,43 @@ const getPlaylists = (accessToken: string) => {
   })
     .then((response) => response.json())
     .then((play) => {
-      const test = play.items;
-      test.map((result: Playlists) => {
+      play.items.map((result: Playlists) => {
         console.log("tututututututuutututututu", result.track.uri);
         return result.track.uri;
       });
     });
 };
 
-export { play, pause, getPlaylists, album };
+export const getTrack = async (accessToken: string) => {
+  return await fetch("https://api.spotify.com/v1/tracks/1imMjt1YGNebtrtTAprKV7", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+    .then((response) => response.json())
+    .then((piste) => (track = piste.uri));
+};
+
+export default getPlaylists;
+
+// export const getServerSideProps = async (accessToken: string): Promise<unknown> => {
+//   const playlist = awaitfetch("https://api.spotify.com/v1/playlists/3xVCqaHzZ2E67edgUI9w6I/tracks", {
+//     method: "GET",
+//     headers: {
+//       "Content-Type": "application/json",
+//       Authorization: `Bearer ${accessToken}`,
+//     },
+//   })
+//     .then((response) => response.json())
+//     .then((play) => {
+//       const test = play.items;
+//       const listTracks = test.map((result: Playlists) => {
+//         console.log("tututututututuutututututu", result.track.uri);
+//         return result.track.uri;
+//       });
+//       return <li>{listTracks}</li>;
+//     });
+//   return { props: { list } };
+// };
