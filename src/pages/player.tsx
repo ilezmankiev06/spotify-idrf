@@ -7,33 +7,12 @@ import TabBar from "../components/tabBar";
 import { Layout } from "../components/Layout";
 import React from "react";
 import { SpotifyState, SpotifyUser } from "../types/spotify";
-import { play, pause, getPlaylists, album } from "../components/fonction";
+import { play, pause } from "../components/fonction";
 
 interface Props {
   user: SpotifyUser;
   accessToken: string;
 }
-
-export const play = (accessToken: string, deviceId: string) => {
-  return fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
-    method: "PUT",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-    body: JSON.stringify({
-      uris: ["spotify:track:1lCRw5FEZ1gPDNPzy1K4zW"],
-    }),
-  });
-};
-
-export const pause = (accessToken: string, deviceId: string) => {
-  return fetch(`https://api.spotify.com/v1/me/player/pause?device_id=${deviceId}`, {
-    method: "PUT",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-};
 
 const Player: NextPage<Props> = ({ accessToken }) => {
   const { data, error } = useSWR("/api/get-user-info");
