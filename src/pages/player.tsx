@@ -7,7 +7,8 @@ import TabBar from "../components/tabBar";
 import { Layout } from "../components/Layout";
 import React from "react";
 import { SpotifyState, SpotifyUser } from "../types/spotify";
-import { play, pause, getPlaylists, album } from "../components/fonction";
+import { play, pause, album, getTrack } from "../components/fonction";
+import getPlaylists from "../components/fonction";
 
 interface Props {
   user: SpotifyUser;
@@ -38,7 +39,7 @@ export const pause = (accessToken: string, deviceId: string) => {
 const Player: NextPage<Props> = ({ accessToken }) => {
   const { data, error } = useSWR("/api/get-user-info");
   const [paused, setPaused] = React.useState(true);
-  const [currentTrack, setCurrentTrack] = React.useState("");
+  const [currentTrack, setCurrentTrack] = React.useState<any>("");
   const [deviceId, player] = useSpotifyPlayer(accessToken);
 
   React.useEffect(() => {
