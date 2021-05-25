@@ -5,7 +5,8 @@ import useSWR from "swr";
 import { Layout } from "../components/Layout";
 import React from "react";
 import { SpotifyState, SpotifyUser } from "../types/spotify";
-import { play, pause, getPlaylists, album } from "../components/fonction";
+import { play, pause, album, getTrack } from "../components/fonction";
+import getPlaylists from "../components/fonction";
 
 interface Props {
   user: SpotifyUser;
@@ -15,7 +16,7 @@ interface Props {
 const Player: NextPage<Props> = ({ accessToken }) => {
   const { data, error } = useSWR("/api/get-user-info");
   const [paused, setPaused] = React.useState(true);
-  const [currentTrack, setCurrentTrack] = React.useState("");
+  const [currentTrack, setCurrentTrack] = React.useState<any>("");
   const [deviceId, player] = useSpotifyPlayer(accessToken);
 
   React.useEffect(() => {
@@ -49,8 +50,7 @@ const Player: NextPage<Props> = ({ accessToken }) => {
       >
         {paused ? "play" : "stop"}
       </button>
-
-      <button onClick={() => getPlaylists(accessToken)}>test</button>
+      <button onClick={() => getTrack(accessToken)}>test</button>
     </Layout>
   );
 };
