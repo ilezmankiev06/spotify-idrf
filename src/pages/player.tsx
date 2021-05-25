@@ -7,6 +7,7 @@ import TabBar from "../components/tabBar";
 import { Layout } from "../components/Layout";
 import React from "react";
 import { SpotifyState, SpotifyUser } from "../types/spotify";
+import { play, pause, getPlaylists, album } from "../components/fonction";
 
 interface Props {
   user: SpotifyUser;
