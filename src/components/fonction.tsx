@@ -1,27 +1,6 @@
-type SpotifyTrack = {
-  id: string;
-  uri: string;
-  type: "track" | "album" | "artist" | "user";
-  linked_from_uri: any;
-  linked_from: {
-    uri: string | null;
-    id: string | null;
-  };
-  media_type: string;
-  name: string;
-  duration_ms: number;
-  artists: {
-    name: string;
+type Playlists = {
+  track: {
     uri: string;
-  }[];
-  album: {
-    uri: string;
-    name: string;
-    images: {
-      url: string;
-      height: number;
-      width: number;
-    }[];
   };
 };
 const play = (accessToken: string, deviceId: string) => {
@@ -63,15 +42,13 @@ const getPlaylists = (accessToken: string) => {
       Authorization: `Bearer ${accessToken}`,
     },
   })
-    .then((response) => {
-      console.log("tututututu", response);
-      return response.json();
-    })
+    .then((response) => response.json())
     .then((play) => {
-      console.log("taratatata", play);
-      const items = play.items.map((result: SpotifyTrack) => result.uri);
-      console.log("iteeeeemmsmmms", items);
-      return items;
+      const test = play.items;
+      test.map((result: Playlists) => {
+        console.log("tututututututuutututututu", result.track.uri);
+        return result.track.uri;
+      });
     });
 };
 
