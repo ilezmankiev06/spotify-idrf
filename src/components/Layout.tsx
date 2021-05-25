@@ -6,7 +6,7 @@ type Props = {
   spotifyLoginUrl?: string;
 };
 
-const NavBar: React.FC<Props> = () => {
+const NavBar: React.FC<Props> = ({ isLoggedIn, spotifyLoginUrl }) => {
   return (
     <div>
       <nav className="sidebar navbar-expand-lg navbar-custom">
@@ -32,6 +32,17 @@ const NavBar: React.FC<Props> = () => {
               <i className="fas fa-list"></i> Bibliothèque
             </a>
           </p>
+          {isLoggedIn ? (
+            <>
+              <p>
+                <a className="login" href="/api/logout">logout</a>
+              </p>
+            </>
+          ) : (
+            <p>
+              <a className="login" href={spotifyLoginUrl}>login</a>
+            </p>
+          )}
         </div>
       </nav>
       <style jsx> {`
