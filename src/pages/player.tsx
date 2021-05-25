@@ -5,53 +5,12 @@ import useSWR from "swr";
 import { Layout } from "../components/Layout";
 import React from "react";
 import { SpotifyState, SpotifyUser } from "../types/spotify";
+import { play, pause, getPlaylists, album } from "../components/fonction";
 
 interface Props {
   user: SpotifyUser;
   accessToken: string;
 }
-
-const play = (accessToken: string, deviceId: string) => {
-  return fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
-    method: "PUT",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-    body: JSON.stringify({
-      uris: ["spotify:track:1lCRw5FEZ1gPDNPzy1K4zW"],
-    }),
-  });
-};
-
-// const album = (accessToken: string, deviceId: string) => {
-//   return fetch(`https://api.spotify.com/v1/albums/74ASZWbe4lXaubB36ztrGX/`)
-//     .then((result) => result.json())
-//     .then((json) => console.log(json));
-// };
-
-const pause = (accessToken: string, deviceId: string) => {
-  return fetch(`https://api.spotify.com/v1/me/player/pause?device_id=${deviceId}`, {
-    method: "PUT",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-};
-
-const album = (accessToken: string) => {
-  return fetch(`https://api.spotify.com/v1/albums/5lKlFlReHOLShQKyRv6AL9`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-  })
-    .then((res) => {
-      console.log(res);
-      return res.json();
-    })
-    .then((result) => console.log(result));
-};
 
 const Player: NextPage<Props> = ({ accessToken }) => {
   const { data, error } = useSWR("/api/get-user-info");
@@ -90,8 +49,8 @@ const Player: NextPage<Props> = ({ accessToken }) => {
       >
         {paused ? "play" : "stop"}
       </button>
-      <button onClick={() => album(accessToken)}>toto</button>
-      {/* <button onClick={album2}>test</button> */}
+
+      <button onClick={() => getPlaylists(accessToken)}>test</button>
     </Layout>
   );
 };
