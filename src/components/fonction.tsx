@@ -4,15 +4,14 @@ type Playlists = {
   };
 };
 
-let track = "";
-export const play = (accessToken: string, deviceId: string) => {
-  return fetch(`https://api.spotify.com/v1/me/player/play?device_id=${track}`, {
+export const play = (accessToken: string, displayedSong: string) => {
+  return fetch(`https://api.spotify.com/v1/me/player/play?device_id=${displayedSong}`, {
     method: "PUT",
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
     body: JSON.stringify({
-      uris: ["1imMjt1YGNebtrtTAprKV7"],
+      uris: [displayedSong],
     }),
   });
 };
@@ -53,8 +52,8 @@ const getPlaylists = async (accessToken: string) => {
     });
 };
 
-export const getTrack = async (accessToken: string) => {
-  return await fetch("https://api.spotify.com/v1/tracks/1imMjt1YGNebtrtTAprKV7", {
+export const getTrack = async (accessToken: string, setdisplayedSong: any) => {
+  return await fetch("https://api.spotify.com/v1/tracks/7eExIeAIMkxmrlxkzsNBzx", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -62,7 +61,7 @@ export const getTrack = async (accessToken: string) => {
     },
   })
     .then((response) => response.json())
-    .then((piste) => (track = piste.uri));
+    .then((piste) => setdisplayedSong(piste.uri));
 };
 
 export default getPlaylists;

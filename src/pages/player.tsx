@@ -20,6 +20,9 @@ const Player: NextPage<Props> = ({ accessToken }) => {
   const [paused, setPaused] = React.useState(true);
   const [currentTrack, setCurrentTrack] = React.useState<any>("");
   const [deviceId, player] = useSpotifyPlayer(accessToken);
+  const [displayedSong, setdisplayedSong] = React.useState("");
+  const [displayedPlaylist, setDisplayedPlaylist] = React.useState([""]);
+  const [displayedAlbum, setDisplayedAlbum] = React.useState([""]);
 
   React.useEffect(() => {
     const playerStateChanged = (state: SpotifyState) => {
@@ -45,11 +48,20 @@ const Player: NextPage<Props> = ({ accessToken }) => {
       <div className="d-flex justify-content-evenly">
         <div className="col-2 bg-dark" style={{ height: "44rem" }}>
           <Layout isLoggedIn={true}>
-          <p>Welcome {user && user.display_name}</p>
+            <p>Welcome {user && user.display_name}</p>
             <p>{currentTrack}</p>
             <button
               onClick={() => {
                 paused ? play(accessToken, deviceId) : pause(accessToken, deviceId);
+              }}
+            >
+              {paused ? "play" : "stop"}
+            </button>
+            <button onClick={() => getTrack(accessToken, setdisplayedSong)}>test</button>
+            <h1>{displayedSong}</h1>
+            <button
+              onClick={() => {
+                paused ? play(accessToken, displayedSong) : pause(accessToken, displayedSong);
               }}
             >
               {paused ? "play" : "stop"}
@@ -59,8 +71,7 @@ const Player: NextPage<Props> = ({ accessToken }) => {
         <NavBarBody></NavBarBody>
       </div>
       <div>
-        <TabBar>
-        </TabBar>
+        <TabBar></TabBar>
       </div>
       <style>
         {`
