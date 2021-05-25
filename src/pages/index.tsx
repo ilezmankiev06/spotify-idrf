@@ -1,6 +1,8 @@
 import Cookies from "cookies";
 import { GetServerSideProps } from "next";
 import useSWR from "swr";
+import TabBar from "../components/tabBar";
+import NavBarBody from "../components/navBarBody";
 import { Layout } from "../components/Layout";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -15,62 +17,21 @@ const Index: React.FC<IndexProps> = ({ spotifyLoginUrl }) => {
   return (
     <div className="d-flex flex-column">
       <div className="d-flex justify-content-evenly">
-        <div className="col-2 bg-dark" style={{ height: "47rem" }}>
+        <div className="col-2 bg-dark" style={{ height: "44rem" }}>
           <Layout isLoggedIn={user !== undefined} spotifyLoginUrl={spotifyLoginUrl}>
             <p>{user && user.display_name}</p>
           </Layout>
         </div>
-
-        <div className="col-10">
-          <div>
-            <div>
-              <nav className="navbar navbar-laft navbar-custom ">
-                <p>
-                  <h1>la fiesta</h1>
-                  <a href="/">
-                    <i className="fas fa-chevron-left"></i>Retour
-                  </a>
-                </p>
-                <p>
-                  <a href="/">
-                    <i className="fas fa-chevron-right"></i>Avancer
-                  </a>
-                </p>
-              </nav>
-            </div>
-
-            <nav className="navbar navbar-laft navbar-custom">
-              <p>
-                <a href="/">
-                  <i className="fas fa-chevron-left"></i>Retour
-                </a>
-              </p>
-              <p>
-                <a href="/">
-                  <i className="fas fa-chevron-right"></i>Avancer
-                </a>
-              </p>
-            </nav>
-
-            <nav className="navbar navbar-laft navbar-custom">
-              <p>
-                <a href="/">
-                  <i className="fas fa-chevron-left"></i>Retour
-                </a>
-              </p>
-              <p>
-                <a href="/">
-                  <i className="fas fa-chevron-right"></i>Avancer
-                </a>
-              </p>
-            </nav>
-          </div>
-
-          <div>Body de notre body</div>
-        </div>
+        <NavBarBody></NavBarBody>
       </div>
-
-      <div>yaya</div>
+      <TabBar></TabBar>
+      <style>
+        {`
+        .boutton {
+          margin-left: 3rem;
+        }
+        `}
+      </style>
     </div>
   );
 };

@@ -9,57 +9,59 @@ type Props = {
 const NavBar: React.FC<Props> = ({ isLoggedIn, spotifyLoginUrl }) => {
   return (
     <div>
-      {/* // <nav>
-    //   <p>
-    //     <a href="/">home</a>
-    //   </p> */}
-      {/* {isLoggedIn ? (
-        <>
-          <p>
-            <a href="/api/logout">logout</a>
-          </p>
-        </>
-      ) : (
-        <p>
-          <a href={spotifyLoginUrl}>login</a>
-        </p>
-      )} */}
       <nav className="sidebar navbar-expand-lg navbar-custom">
         <div className="container">
-          <a href="/">
+          <a className="title" href="/">
             <h1>
               <i className="fab fa-spotify"></i>Spotify
             </h1>
           </a>
           <br />
           <p>
-            <a href="/">
-              <i className="fas fa-home"></i>Accueil
+            <a className="accueil" href="/">
+              <i className="fas fa-home"></i> Accueil
             </a>
           </p>
           <p>
-            <a href="/search">
-              <i className="fas fa-search"></i>Rechercher
+            <a className="recherche" href="/search">
+              <i className="fas fa-search"></i> Rechercher
             </a>
           </p>
           <p>
-            <a href="/collection/playlists">
-              <i className="fas fa-list"></i>Bibliothèque
+            <a className="bibliotheque" href="/collection/playlists">
+              <i className="fas fa-list"></i> Bibliothèque
             </a>
           </p>
           {isLoggedIn ? (
             <>
               <p>
-                <a href="/api/logout">logout</a>
+                <a className="login" href="/api/logout">logout</a>
               </p>
             </>
           ) : (
             <p>
-              <a href={spotifyLoginUrl}>login</a>
+              <a className="login" href={spotifyLoginUrl}>login</a>
             </p>
           )}
         </div>
       </nav>
+      <style jsx> {`
+        .title:hover {
+          text-decoration: none;
+        }
+        .accueil:hover {
+          text-decoration: none;
+        }
+        .recherche:hover {
+          text-decoration: none;
+        }
+        .bibliotheque:hover {
+          text-decoration: none;
+        }
+        .login:hover {
+          text-decoration: none;
+        }
+      `} </style>
     </div>
   );
 };
