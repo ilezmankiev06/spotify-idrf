@@ -1,7 +1,6 @@
 import React from "react";
-import { getTrack } from "../pages/player";
 
-const TabBar: React.FC = () => {
+const Lecteur: React.FC = () => {
   return (
     <div className="body d-flex justify-content">
       <div className="titre" style={{ width: "15rem" }}>
@@ -36,16 +35,15 @@ const TabBar: React.FC = () => {
         <h1>Volume</h1>
       </div>
       <style>
-        {" "}
         {`
         .player {
           position: fixed;
           margin-top: 44rem;
         }
-        `}{" "}
+        `}
       </style>
     </div>
   );
 };
 
-export default TabBar;
+export default Lecteur;

@@ -3,12 +3,10 @@ import useSpotifyPlayer from "../hooks/useSpotifyPlayer";
 import Cookies from "cookies";
 import useSWR from "swr";
 import NavBarBody from "../components/navBarBody";
-import TabBar from "../components/tabBar";
+import Lecteur from "../components/lecteur";
 import { Layout } from "../components/Layout";
 import React from "react";
 import { SpotifyState, SpotifyTrack, SpotifyUser } from "../types/spotify";
-import Albums from "../components/albums";
-import { access } from "fs";
 
 interface Props {
   user: SpotifyUser;
@@ -98,11 +96,21 @@ export const getTrack = async (accessToken: string, setTrack: any) => {
     .then((song) => setTrack(song.uri));
 };
 
+export const Volumes = (accessToken: string, volume: number) => {
+  return fetch(`https://api.spotify.com/v1/me/player/volume=${volume}`, {
+  method: "PUT",
+  headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
+
 const myAlbum: Album = {
   id: "5GAvwptqr4r63i8lZWrL58",
   title: "My turn",
   cover: "https://m.media-amazon.com/images/I/41j+BCAmgOL._SL1000_.jpg",
 };
+
 const Player: NextPage<Props> = ({ accessToken }) => {
   const { data, error } = useSWR("/api/get-user-info");
   const [paused, setPaused] = React.useState(true);
@@ -152,19 +160,20 @@ const Player: NextPage<Props> = ({ accessToken }) => {
             >
               test
             </button>
-            <button
+          </Layout>
+        </div>
+        <NavBarBody>
+        <button
               onClick={() => {
                 getTrack(accessToken, setTrack);
               }}
             >
               recuperation track
             </button>
-          </Layout>
-        </div>
-        <NavBarBody></NavBarBody>
+        </NavBarBody>
       </div>
       <div>
-        <TabBar></TabBar>
+        <Lecteur></Lecteur>
       </div>
       <style>
         {`
