@@ -2,13 +2,9 @@ import { NextPage, GetServerSidePropsContext } from "next";
 import useSpotifyPlayer from "../hooks/useSpotifyPlayer";
 import Cookies from "cookies";
 import useSWR from "swr";
-import NavBarBody from "../components/navBarBody";
-import TabBar from "../components/tabBar";
 import { Layout } from "../components/Layout";
 import React from "react";
 import { SpotifyState, SpotifyTrack, SpotifyUser } from "../types/spotify";
-import Albums from "../components/albums";
-import { access } from "fs";
 
 interface Props {
   user: SpotifyUser;
@@ -69,7 +65,7 @@ const getAlbum = async (accessToken: string, setTargetAlbum: any) => {
     });
 };
 
-const getPlaylists = async (accessToken: string, setCurrentTrack: any) => {
+const getPlaylists = async (accessToken: string, setPlaylist: any) => {
   return await fetch("https://api.spotify.com/v1/playlists/3xVCqaHzZ2E67edgUI9w6I/tracks", {
     method: "GET",
     headers: {
@@ -79,14 +75,11 @@ const getPlaylists = async (accessToken: string, setCurrentTrack: any) => {
   })
     .then((response) => response.json())
     .then((play) => {
-      play.items.map((result: Playlists) => {
-        console.log("tututututututuutututututu", result.track.uri);
-        return setCurrentTrack(result.track.uri);
-      });
+      setPlaylist(play);
     });
 };
 
-export const getTrack = async (accessToken: string, setTrack: any) => {
+export const getTrack = async (accessToken: string, setTrack: any, setPicture: any) => {
   return await fetch("https://api.spotify.com/v1/tracks/6nQy5XEEEJKu8FE1FS2Wbt", {
     method: "GET",
     headers: {
@@ -95,7 +88,10 @@ export const getTrack = async (accessToken: string, setTrack: any) => {
     },
   })
     .then((response) => response.json())
-    .then((song) => setTrack(song.uri));
+    .then((song) => {
+      setPicture(song.album.images[1].url);
+      setTrack(song.uri);
+    });
 };
 
 const myAlbum: Album = {
@@ -111,6 +107,7 @@ const Player: NextPage<Props> = ({ accessToken }) => {
   const [targetAlbum, setTargetAlbum] = React.useState(myAlbum);
   const [track, setTrack] = React.useState("");
   const [playlist, setPlaylist] = React.useState("");
+  const [picture, setPicture] = React.useState("");
 
   React.useEffect(() => {
     const playerStateChanged = (state: SpotifyState) => {
@@ -138,13 +135,7 @@ const Player: NextPage<Props> = ({ accessToken }) => {
           <Layout isLoggedIn={true}>
             <p>Welcome {user && user.display_name}</p>
             <p>{currentTrack}</p>
-            <button
-              onClick={() => {
-                paused ? play(accessToken, deviceId, track) : pause(accessToken, deviceId);
-              }}
-            >
-              {paused ? "play" : "stop"}
-            </button>
+
             <button
               onClick={() => {
                 getPlaylists(accessToken, setPlaylist);
@@ -152,27 +143,135 @@ const Player: NextPage<Props> = ({ accessToken }) => {
             >
               test
             </button>
-            <button
-              onClick={() => {
-                getTrack(accessToken, setTrack);
-              }}
-            >
-              recuperation track
-            </button>
           </Layout>
         </div>
-        <NavBarBody></NavBarBody>
+        <div className="col-10">
+          <div>
+            <div>
+              <nav className="navbar navbar-laft navbar-custom ">
+                <div className="d-flex justify-content">
+                  <p>
+                    <a href="javascript:history.go(-1)">
+                      <i className="fas fa-chevron-left" style={{ width: "3rem" }}></i>
+                    </a>
+                  </p>
+                  <p>
+                    <a href="javascript:history.go(+1)">
+                      <i className="fas fa-chevron-right" style={{ width: "3rem" }}></i>
+                    </a>
+                  </p>
+                </div>
+              </nav>
+            </div>
+
+            <nav className="navbar navbar-laft navbar-custom">
+              <div className="d-flex justify-content">
+                <p>
+                  <a href="javascript:history.go(-1)">
+                    <i className="fas fa-chevron-left" style={{ width: "3rem" }}></i>
+                  </a>
+                </p>
+                <p>
+                  <a href="javascript:history.go(+1)">
+                    <i className="fas fa-chevron-right" style={{ width: "3rem" }}></i>
+                  </a>
+                </p>
+                <div className="container-fluid">
+                  <form className="d-flex">
+                    <input
+                      className="form-control me-2"
+                      type="search"
+                      placeholder="Artites, titres ou albums"
+                      aria-label="Search"
+                      style={{ width: "30rem" }}
+                    />
+                    <button className="btn btn-outline-success" type="submit">
+                      Search
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </nav>
+
+            <nav className="navbar navbar-laft navbar-custom">
+              <div className="d-flex justify-content">
+                <p>
+                  <a href="javascript:history.go(-1)">
+                    <i className="fas fa-chevron-left" style={{ width: "3rem" }}></i>
+                  </a>
+                </p>
+                <p>
+                  <a href="javascript:history.go(+1)">
+                    <i className="fas fa-chevron-right" style={{ width: "3rem" }}></i>
+                  </a>
+                </p>
+                <button className="boutton btn btn-outline-success" type="submit" style={{ width: "5rem" }}>
+                  Playlists
+                </button>
+                <button className="boutton btn btn-outline-success" type="submit" style={{ width: "5rem" }}>
+                  Artistes
+                </button>
+                <button className="boutton btn btn-outline-success" type="submit" style={{ width: "5rem" }}>
+                  Albums
+                </button>
+              </div>
+            </nav>
+          </div>
+          <div>
+            <div className="card" style={{ width: "18rem" }}>
+              <img src={picture} className="card-img-top" alt="..." />
+              <div className="card-body">
+                <p className="card-text">
+                  <button
+                    className="boutton btn btn-outline-success"
+                    type="submit"
+                    style={{ width: "5rem" }}
+                    onClick={() => {
+                      getTrack(accessToken, setTrack, setPicture);
+                    }}
+                  >
+                    {currentTrack}
+                  </button>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div>
-        <TabBar></TabBar>
+      <div className="body d-flex justify-content">
+        <div className="titre" style={{ width: "15rem" }}>
+          <h1>Titre</h1>
+        </div>
+        <div className="milieu" style={{ width: "60rem" }}>
+          <div className="text-center bg-dark" style={{ height: "5.5rem" }}>
+            <div className="media-controls">
+              <br />
+              <div className="media-buttons d-flex justify-content-evenly">
+                <br />
+                <button className="back-button media-button">
+                  <i className="fas fa-step-backward button-icons"></i>
+                  <span className="button-text milli">Back</span>
+                </button>
+                <button
+                  onClick={() => {
+                    paused ? play(accessToken, deviceId, track) : pause(accessToken, deviceId);
+                  }}
+                >
+                  {paused ? "play" : "stop"}
+                </button>
+                <button className="skip-button media-button">
+                  <i className="fas fa-step-forward button-icons"></i>
+                  <span className="button-text milli">Skip</span>
+                </button>
+                <br />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h1>Volume</h1>
+        </div>
       </div>
-      <style>
-        {`
-        .boutton {
-          margin-left: 3rem;
-        }
-        `}
-      </style>
     </div>
   );
 };
