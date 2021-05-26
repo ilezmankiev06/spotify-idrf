@@ -7,22 +7,93 @@ import TabBar from "../components/tabBar";
 import { Layout } from "../components/Layout";
 import React from "react";
 import { SpotifyState, SpotifyUser } from "../types/spotify";
-import { play, pause, album, getTrack } from "../components/fonction";
-import getPlaylists from "../components/fonction";
+import Albums from "../components/albums";
 
 interface Props {
   user: SpotifyUser;
   accessToken: string;
 }
 
+type Album = {
+  id: string;
+  title: string;
+  cover: string;
+};
+
+type Playlists = {
+  track: {
+    uri: string;
+  };
+};
+
+export const play = (accessToken: string, deviceId: string) => {
+  return fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({
+      uris: ["spotify:track:1imMjt1YGNebtrtTAprKV7"],
+    }),
+  });
+};
+
+export const pause = (accessToken: string, deviceId: string) => {
+  return fetch(`https://api.spotify.com/v1/me/player/pause?device_id=${deviceId}`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
+
+const getAlbum = async (accessToken: string) => {
+  return fetch(`https://api.spotify.com/v1/albums/5GAvwptqr4r63i8lZWrL58`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+    .then((response) => response.json())
+    .then((result) => {
+      console.log(result);
+      return {
+        id: result.id,
+        title: result.name,
+        cover: result.images,
+      };
+    });
+};
+
+const getPlaylists = async (accessToken: string) => {
+  return await fetch("https://api.spotify.com/v1/playlists/3xVCqaHzZ2E67edgUI9w6I/tracks", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+    .then((response) => response.json())
+    .then((play) => {
+      play.items.map((result: Playlists) => {
+        console.log("tututututututuutututututu", result.track.uri);
+        return result.track.uri;
+      });
+    });
+};
+
+const myAlbum: Album = {
+  id: "5GAvwptqr4r63i8lZWrL58",
+  title: "My turn",
+  cover: "https://m.media-amazon.com/images/I/41j+BCAmgOL._SL1000_.jpg",
+};
 const Player: NextPage<Props> = ({ accessToken }) => {
   const { data, error } = useSWR("/api/get-user-info");
   const [paused, setPaused] = React.useState(true);
   const [currentTrack, setCurrentTrack] = React.useState<any>("");
   const [deviceId, player] = useSpotifyPlayer(accessToken);
-  const [displayedSong, setdisplayedSong] = React.useState("");
-  const [displayedPlaylist, setDisplayedPlaylist] = React.useState([""]);
-  const [displayedAlbum, setDisplayedAlbum] = React.useState([""]);
+  const [targetAlbum, setTargetAlbum] = React.useState(myAlbum);
 
   React.useEffect(() => {
     const playerStateChanged = (state: SpotifyState) => {
@@ -57,15 +128,14 @@ const Player: NextPage<Props> = ({ accessToken }) => {
             >
               {paused ? "play" : "stop"}
             </button>
-            <button onClick={() => getTrack(accessToken, setdisplayedSong)}>test</button>
-            <h1>{displayedSong}</h1>
             <button
               onClick={() => {
-                paused ? play(accessToken, displayedSong) : pause(accessToken, displayedSong);
+                getAlbum(accessToken);
               }}
             >
-              {paused ? "play" : "stop"}
+              test
             </button>
+            <Albums id={targetAlbum.id} title={targetAlbum.title} cover={targetAlbum.cover} />
           </Layout>
         </div>
         <NavBarBody></NavBarBody>

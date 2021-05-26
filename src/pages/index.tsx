@@ -5,6 +5,7 @@ import TabBar from "../components/tabBar";
 import NavBarBody from "../components/navBarBody";
 import { Layout } from "../components/Layout";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Albums from "../components/albums";
 
 type IndexProps = {
   spotifyLoginUrl?: string;
