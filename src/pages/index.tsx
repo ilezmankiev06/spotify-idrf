@@ -1,11 +1,9 @@
 import Cookies from "cookies";
 import { GetServerSideProps } from "next";
 import useSWR from "swr";
-import TabBar from "../components/tabBar";
-import NavBarBody from "../components/navBarBody";
+
 import { Layout } from "../components/Layout";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Albums from "../components/albums";
 
 type IndexProps = {
   spotifyLoginUrl?: string;
@@ -23,9 +21,8 @@ const Index: React.FC<IndexProps> = ({ spotifyLoginUrl }) => {
             <p>{user && user.display_name}</p>
           </Layout>
         </div>
-        <NavBarBody></NavBarBody>
       </div>
-      <TabBar></TabBar>
+
       <style>
         {`
         .boutton {
