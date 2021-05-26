@@ -94,6 +94,15 @@ export const getTrack = async (accessToken: string, setTrack: any, setPicture: a
     });
 };
 
+export const Volumes = (accessToken: string, volume: number) => {
+  return fetch(`https://api.spotify.com/v1/me/player/volume_percent=${volume}`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+};
+
 const myAlbum: Album = {
   id: "5GAvwptqr4r63i8lZWrL58",
   title: "My turn",
@@ -108,6 +117,7 @@ const Player: NextPage<Props> = ({ accessToken }) => {
   const [track, setTrack] = React.useState("");
   const [playlist, setPlaylist] = React.useState("");
   const [picture, setPicture] = React.useState("");
+  const [volume, setVolume] = React.useState(0);
 
   React.useEffect(() => {
     const playerStateChanged = (state: SpotifyState) => {
@@ -268,8 +278,16 @@ const Player: NextPage<Props> = ({ accessToken }) => {
             </div>
           </div>
         </div>
-        <div>
+        <div className="text-center">
           <h1>Volume</h1>
+          <button className="skip-button media-button" onClick={() => {
+
+          }}>
+            <span className="button-text milli"> + </span>
+          </button>
+          <button className="skip-button media-button">
+            <span className="button-text milli"> - </span>
+          </button>
         </div>
       </div>
     </div>
