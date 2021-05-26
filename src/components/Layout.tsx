@@ -12,8 +12,8 @@ const NavBar: React.FC<Props> = ({ isLoggedIn, spotifyLoginUrl }) => {
       <nav className="sidebar navbar-expand-lg navbar-custom">
         <div className="container">
           <a className="title" href="/">
-            <h1 className="white" style={{color: "white"}}>
-              <i className="fab fa-spotify" ></i>Spotify
+            <h1 className="white" style={{ color: "white" }}>
+              <i className="fab fa-spotify"></i>Spotify
             </h1>
           </a>
           <br />
@@ -35,48 +35,54 @@ const NavBar: React.FC<Props> = ({ isLoggedIn, spotifyLoginUrl }) => {
           {isLoggedIn ? (
             <>
               <p>
-                <a className="login" href="/api/logout">logout</a>
+                <a className="login" href="/api/logout">
+                  logout
+                </a>
               </p>
             </>
           ) : (
             <p>
-              <a className="login" href={spotifyLoginUrl}>login</a>
+              <a className="login" href={spotifyLoginUrl}>
+                login
+              </a>
             </p>
           )}
         </div>
       </nav>
-      <style jsx> {`
-        .title:hover {
-          text-decoration: none;
-        }
-        .title {
-          text-decoration: none;
-        }
-        .accueil:hover {
-          text-decoration: none;
-        }
-        .accueil {
-          text-decoration: none;
-        }
-        .recherche:hover {
-          text-decoration: none;
-        }
-        .recherche {
-          text-decoration: none;
-        }
-        .bibliotheque:hover {
-          text-decoration: none;
-        }
-        .bibliotheque {
-          text-decoration: none;
-        }
-        .login:hover {
-          text-decoration: none;
-        }
-        .login {
-          text-decoration: none;
-        }
-      `} </style>
+      <style jsx>
+        {`
+          .title:hover {
+            text-decoration: none;
+          }
+          .title {
+            text-decoration: none;
+          }
+          .accueil:hover {
+            text-decoration: none;
+          }
+          .accueil {
+            text-decoration: none;
+          }
+          .recherche:hover {
+            text-decoration: none;
+          }
+          .recherche {
+            text-decoration: none;
+          }
+          .bibliotheque:hover {
+            text-decoration: none;
+          }
+          .bibliotheque {
+            text-decoration: none;
+          }
+          .login:hover {
+            text-decoration: none;
+          }
+          .login {
+            text-decoration: none;
+          }
+        `}
+      </style>
     </div>
   );
 };

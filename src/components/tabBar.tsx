@@ -1,4 +1,5 @@
 import React from "react";
+import { getTrack } from "../pages/player";
 
 const TabBar: React.FC = () => {
   return (
