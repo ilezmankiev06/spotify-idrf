@@ -47,7 +47,7 @@ export const pause = (accessToken: string, deviceId: string) => {
   });
 };
 
-const getAlbum = async (accessToken: string) => {
+const getAlbum = async (accessToken: string, setTargetAlbum: any) => {
   return fetch(`https://api.spotify.com/v1/albums/5GAvwptqr4r63i8lZWrL58`, {
     method: "GET",
     headers: {
@@ -58,11 +58,11 @@ const getAlbum = async (accessToken: string) => {
     .then((response) => response.json())
     .then((result) => {
       console.log(result);
-      return {
+      return setTargetAlbum({
         id: result.id,
         title: result.name,
         cover: result.images,
-      };
+      });
     });
 };
 
@@ -93,7 +93,7 @@ const Player: NextPage<Props> = ({ accessToken }) => {
   const [paused, setPaused] = React.useState(true);
   const [currentTrack, setCurrentTrack] = React.useState<any>("");
   const [deviceId, player] = useSpotifyPlayer(accessToken);
-  const [targetAlbum, setTargetAlbum] = React.useState(myAlbum);
+  const [targetAlbum, setTargetAlbum] = React.useState();
 
   React.useEffect(() => {
     const playerStateChanged = (state: SpotifyState) => {
@@ -130,12 +130,12 @@ const Player: NextPage<Props> = ({ accessToken }) => {
             </button>
             <button
               onClick={() => {
-                getAlbum(accessToken);
+                getAlbum(accessToken, setTargetAlbum);
               }}
             >
               test
             </button>
-            <Albums id={targetAlbum.id} title={targetAlbum.title} cover={targetAlbum.cover} />
+            <Albums id={targetAlbum.result.id} title={targetAlbum.title} cover={targetAlbum.cover} />
           </Layout>
         </div>
         <NavBarBody></NavBarBody>
