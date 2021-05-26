@@ -75,7 +75,10 @@ const getPlaylists = async (accessToken: string, setPlaylist: any) => {
   })
     .then((response) => response.json())
     .then((play) => {
-      setPlaylist(play);
+      console.log(play);
+      const tab: any = [];
+      play.items.map((song: Playlists) => tab.push(song.track.uri));
+      setPlaylist(tab);
     });
 };
 
@@ -106,7 +109,7 @@ const Player: NextPage<Props> = ({ accessToken }) => {
   const [deviceId, player] = useSpotifyPlayer(accessToken);
   const [targetAlbum, setTargetAlbum] = React.useState(myAlbum);
   const [track, setTrack] = React.useState("");
-  const [playlist, setPlaylist] = React.useState("");
+  const [playlist, setPlaylist] = React.useState([""]);
   const [picture, setPicture] = React.useState("");
 
   React.useEffect(() => {
@@ -217,7 +220,7 @@ const Player: NextPage<Props> = ({ accessToken }) => {
               </div>
             </nav>
           </div>
-          <div>
+          <div className="d-flex justify-content-evenly">
             <div className="card" style={{ width: "18rem" }}>
               <img src={picture} className="card-img-top" alt="..." />
               <div className="card-body">
@@ -232,6 +235,38 @@ const Player: NextPage<Props> = ({ accessToken }) => {
                   >
                     {currentTrack}
                   </button>
+                </p>
+              </div>
+            </div>
+
+            <div className="card" style={{ width: "18rem" }}>
+              <img src={picture} className="card-img-top" alt="..." />
+              <div className="card-body">
+                <p className="card-text">
+                  <button
+                    className="boutton btn btn-outline-success"
+                    type="submit"
+                    style={{ width: "5rem" }}
+                    onClick={() => {
+                      getPlaylists(accessToken, setPlaylist);
+                    }}
+                  >
+                    recuperer playlist
+                  </button>
+                  {playlist.map((track) => {
+                    return (
+                      <li>
+                        <button
+                          onClick={() => {
+                            play(accessToken, deviceId, track);
+                          }}
+                        >
+                          {currentTrack}
+                        </button>
+                        {track}
+                      </li>
+                    );
+                  })}
                 </p>
               </div>
             </div>
