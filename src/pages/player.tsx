@@ -6,8 +6,9 @@ import NavBarBody from "../components/navBarBody";
 import TabBar from "../components/tabBar";
 import { Layout } from "../components/Layout";
 import React from "react";
-import { SpotifyState, SpotifyUser } from "../types/spotify";
+import { SpotifyState, SpotifyTrack, SpotifyUser } from "../types/spotify";
 import Albums from "../components/albums";
+import { access } from "fs";
 
 interface Props {
   user: SpotifyUser;
@@ -26,14 +27,15 @@ type Playlists = {
   };
 };
 
-export const play = (accessToken: string, deviceId: string) => {
+export const play = (accessToken: string, deviceId: string, track: any) => {
+  console.log(track);
   return fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
     method: "PUT",
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
     body: JSON.stringify({
-      uris: ["spotify:track:1imMjt1YGNebtrtTAprKV7"],
+      uris: [track],
     }),
   });
 };
@@ -47,7 +49,7 @@ export const pause = (accessToken: string, deviceId: string) => {
   });
 };
 
-const getAlbum = async (accessToken: string) => {
+const getAlbum = async (accessToken: string, setTargetAlbum: any) => {
   return fetch(`https://api.spotify.com/v1/albums/5GAvwptqr4r63i8lZWrL58`, {
     method: "GET",
     headers: {
@@ -56,17 +58,18 @@ const getAlbum = async (accessToken: string) => {
     },
   })
     .then((response) => response.json())
-    .then((result) => {
-      console.log(result);
-      return {
-        id: result.id,
-        title: result.name,
-        cover: result.images,
-      };
+    .then((result: SpotifyTrack) => {
+      console.log("kldjfksdhfksdhfksdhk", result.uri);
+      setTargetAlbum(result.uri);
+      // return {
+      //   id: result.id,
+      //   title: result.name,
+      //   cover: result.images,
+      // };
     });
 };
 
-const getPlaylists = async (accessToken: string) => {
+const getPlaylists = async (accessToken: string, setCurrentTrack: any) => {
   return await fetch("https://api.spotify.com/v1/playlists/3xVCqaHzZ2E67edgUI9w6I/tracks", {
     method: "GET",
     headers: {
@@ -78,9 +81,21 @@ const getPlaylists = async (accessToken: string) => {
     .then((play) => {
       play.items.map((result: Playlists) => {
         console.log("tututututututuutututututu", result.track.uri);
-        return result.track.uri;
+        return setCurrentTrack(result.track.uri);
       });
     });
+};
+
+export const getTrack = async (accessToken: string, setTrack: any) => {
+  return await fetch("https://api.spotify.com/v1/tracks/6nQy5XEEEJKu8FE1FS2Wbt", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+    .then((response) => response.json())
+    .then((song) => setTrack(song.uri));
 };
 
 const myAlbum: Album = {
@@ -94,6 +109,8 @@ const Player: NextPage<Props> = ({ accessToken }) => {
   const [currentTrack, setCurrentTrack] = React.useState<any>("");
   const [deviceId, player] = useSpotifyPlayer(accessToken);
   const [targetAlbum, setTargetAlbum] = React.useState(myAlbum);
+  const [track, setTrack] = React.useState("");
+  const [playlist, setPlaylist] = React.useState("");
 
   React.useEffect(() => {
     const playerStateChanged = (state: SpotifyState) => {
@@ -123,19 +140,25 @@ const Player: NextPage<Props> = ({ accessToken }) => {
             <p>{currentTrack}</p>
             <button
               onClick={() => {
-                paused ? play(accessToken, deviceId) : pause(accessToken, deviceId);
+                paused ? play(accessToken, deviceId, track) : pause(accessToken, deviceId);
               }}
             >
               {paused ? "play" : "stop"}
             </button>
             <button
               onClick={() => {
-                getAlbum(accessToken);
+                getPlaylists(accessToken, setPlaylist);
               }}
             >
               test
             </button>
-            <Albums id={targetAlbum.id} title={targetAlbum.title} cover={targetAlbum.cover} />
+            <button
+              onClick={() => {
+                getTrack(accessToken, setTrack);
+              }}
+            >
+              recuperation track
+            </button>
           </Layout>
         </div>
         <NavBarBody></NavBarBody>
