@@ -65,6 +65,7 @@ const getAlbum = async (accessToken: string, setTargetAlbum: any, setPicturealbu
 };
 
 const getPlaylists = async (accessToken: string, setPlaylist: any, setPicturelist: any) => {
+
   return await fetch("https://api.spotify.com/v1/playlists/3xVCqaHzZ2E67edgUI9w6I/tracks", {
     method: "GET",
     headers: {
@@ -119,9 +120,32 @@ const Player: NextPage<Props> = ({ accessToken }) => {
   const [picturelist, setPicturelist] = React.useState("");
   const [picturealbum, setPicturealbum] = React.useState("");
   const [volume, setVolume] = React.useState<any>(0);
+  const [navAlbum, setNavAlbum] = React.useState(false);
+  const [navTrack, setNavTrack] = React.useState(false);
+  const [navPlaylist, setNavPlaylist] = React.useState(false);
+
   const reglageVolume = (value: number) => {
     setVolume(volume + value);
     Volumes(accessToken, deviceId, volume);
+  };
+
+  const reglageNavAlbum = () => {
+      setNavTrack(false);
+      setNavAlbum(true);
+      setNavPlaylist(false);
+      getAlbum(accessToken, setTargetAlbum, setPicturealbum);
+  };
+  const reglageNavTrack = () => {
+      setNavTrack(true);
+      setNavAlbum(false);
+      setNavPlaylist(false);
+      getTrack(accessToken, setTrack, setPicturetrack)
+  };
+  const reglageNavPlaylist = () => {
+    setNavTrack(false);
+    setNavAlbum(false);
+    setNavPlaylist(true);
+    getPlaylists(accessToken, setPlaylist, setPicturelist);
   };
 
   React.useEffect(() => {
@@ -146,13 +170,31 @@ const Player: NextPage<Props> = ({ accessToken }) => {
     }
   }, [volume]);
 
+  // React.useEffect(() => {
+  //   if (navAlbum) {
+  //     setNavAlbum(true);
+  //   }
+  // }, [navAlbum])
+
+  // React.useEffect(() => {
+  //   if (navTrack) {
+  //     setNavTrack(true);
+  //   } 
+  // }, [navTrack])
+
+  // React.useEffect(() => {
+  //   if (navPlaylist) {
+  //     setNavPlaylist(true);
+  //   } 
+  // }, [navPlaylist])
+
   if (error) return <div>failed to load</div>;
   if (!data) return <div>loading...</div>;
   const user = data;
 
   return (
     <div className="d-flex flex-column">
-      <div className="d-flex justify-content-evenly">
+      <div className="bodyNavBar d-flex justify-content-evenly">
         <div className="col-2 bg-dark" style={{ height: "44rem" }}>
           <Layout isLoggedIn={true}>
             <p style={{ color: "white" }}>Welcome {user && user.display_name}</p>
@@ -180,8 +222,10 @@ const Player: NextPage<Props> = ({ accessToken }) => {
               </div>
             </nav>
           </div>
-          <div className="d-flex justify-content-evenly">
-            <div className="card" style={{ width: "18rem" }}>
+          <div className="col d-flex justify-content-around">
+            <div className="column">
+          <button onClick={() => reglageNavAlbum()}>Album</button>
+          {navAlbum ? <div className="card" style={{ width: "18rem" }}>
               <img src={picturealbum} className="card-img-top" alt="..." />
               <div className="card-body">
                 <p className="card-text">
@@ -197,7 +241,7 @@ const Player: NextPage<Props> = ({ accessToken }) => {
                   </button>
                   {targetAlbum.map((track) => {
                     return (
-                      <li className="list-unstyled">
+                      <li className="listMusique list-unstyled">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="16"
@@ -217,7 +261,14 @@ const Player: NextPage<Props> = ({ accessToken }) => {
                   })}
                 </p>
               </div>
+            </div> : null}
             </div>
+            
+
+
+            <div className="column">
+            <button onClick={() => reglageNavTrack()}>track</button>
+            {navTrack ? 
             <div className="card" style={{ width: "18rem" }}>
               <img src={picturetrack} className="card-img-top" alt="..." />
               <div className="card-body">
@@ -231,13 +282,19 @@ const Player: NextPage<Props> = ({ accessToken }) => {
                     }}
                   >
                     Track
-                    {/* {currentTrack} */}
+                    {currentTrack}
                   </button>
                 </p>
               </div>
+            </div> : null}
             </div>
 
-            <div className="card" style={{ width: "18rem" }}>
+
+
+
+            <div className="column">
+            <button onClick={() => reglageNavPlaylist()}>Playlist</button>
+            {navPlaylist ? <div className="card" style={{ width: "18rem" }}>
               <img src={picturelist} className="card-img-top" alt="..." />
               <div className="card-body">
                 <p className="card-text">
@@ -273,8 +330,9 @@ const Player: NextPage<Props> = ({ accessToken }) => {
                   })}
                 </p>
               </div>
+            </div> : null}
             </div>
-          </div>
+            </div>
         </div>
       </div>
       <div className="body d-flex justify-content">
@@ -311,12 +369,23 @@ const Player: NextPage<Props> = ({ accessToken }) => {
           <div className="text-center d-flex justify-content">
             <div className="slidecontainer">
               <h1>Volume</h1>
-              <button onClick={() => reglageVolume(10)}>plus</button>
+              {volume}
+              <button className="buttonVolume" onClick={() => reglageVolume(10)}>plus</button>
               <button onClick={() => reglageVolume(-10)}>moins</button>
             </div>
           </div>
         </div>
       </div>
+      <style jsx>{`
+        .buttonVolume {
+          margin-right: 1rem;
+          margin-left: 1rem;
+        }
+        .card-text {
+          overflow: scroll;
+          max-height: 15rem;
+        }
+      `}</style>
     </div>
   );
 };
