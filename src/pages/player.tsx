@@ -182,15 +182,15 @@ const Player: NextPage<Props> = ({ accessToken }) => {
   const user = data;
 
   return (
-    <div className="d-flex flex-column">
+    <div className="all-body d-flex flex-column">
       <div className="bodyNavBar d-flex justify-content-evenly">
-        <div className="col-2 bg-dark" style={{ height: "44rem" }}>
+        <div className="all-sidebar col-2" style={{ height: "44rem" }}>
           <Layout isLoggedIn={true}>
             <p style={{ color: "white" }}>Welcome {user && user.display_name}</p>
-            <p style={{ color: "white" }}>{currentTrack}</p>
+            {/* <p style={{ color: "white" }}>{currentTrack}</p> */}
           </Layout>
         </div>
-        <div className="col-10">
+        <div className="centre-body col-10">
           <div>
             <nav className="navbar navbar-laft navbar-custom">
               <div className="d-flex justify-content">
@@ -265,13 +265,13 @@ const Player: NextPage<Props> = ({ accessToken }) => {
                       <button
                         className="boutton btn btn-outline-success"
                         type="submit"
-                        style={{ width: "5rem" }}
+                        style={{ width: "15rem" }}
                         onClick={() => {
                           getTrack(accessToken, setTrack, setPicturetrack);
                         }}
                       >
                         Track
-                        {currentTrack}
+                        <p>{currentTrack}</p>
                       </button>
                     </p>
                   </div>
@@ -326,10 +326,10 @@ const Player: NextPage<Props> = ({ accessToken }) => {
       </div>
       <div className="body d-flex justify-content">
         <div className="titre" style={{ width: "15rem" }}>
-          <h1>{currentTrack}</h1>
+          <h1 className="titre-musique">{currentTrack}</h1>
         </div>
         <div className="milieu" style={{ width: "60rem" }}>
-          <div className="text-center bg-dark" style={{ height: "5.5rem" }}>
+          <div className="text-center" style={{ height: "5.5rem" }}>
             <div className="media-controls">
               <br />
               <div className="media-buttons d-flex justify-content-evenly">
@@ -355,10 +355,9 @@ const Player: NextPage<Props> = ({ accessToken }) => {
           </div>
         </div>
         <div>
-          <div className="text-center d-flex justify-content">
+          <div className="text-center-right d-flex justify-content">
             <div className="slidecontainer">
-              <h1>Volume</h1>
-              {volume}
+              <h1 className="text-volume">Volume: {volume}%</h1>
               <button className="buttonVolume" onClick={() => reglageVolume(10)}>
                 plus
               </button>
@@ -368,6 +367,12 @@ const Player: NextPage<Props> = ({ accessToken }) => {
         </div>
       </div>
       <style jsx>{`
+        .centre-body {
+          background-color: #272727;
+        }
+        .body {
+          background-color: #181818;
+        }
         .buttonVolume {
           margin-right: 1rem;
           margin-left: 1rem;
@@ -375,6 +380,19 @@ const Player: NextPage<Props> = ({ accessToken }) => {
         .card-text {
           overflow: scroll;
           max-height: 15rem;
+        }
+        .titre-musique {
+          color: white;
+          font-size: 30px;
+          overflow: scroll;
+          max-height: 4.5rem;
+        }
+        .text-volume {
+          color: white;
+          font-size: 30px;
+        }
+        .all-sidebar {
+          background-color: black;
         }
       `}</style>
     </div>

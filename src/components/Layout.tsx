@@ -8,7 +8,7 @@ type Props = {
 
 const NavBar: React.FC<Props> = ({ isLoggedIn, spotifyLoginUrl }) => {
   return (
-    <div>
+    <div className="all-sidebar">
       <nav className="sidebar navbar-expand-lg navbar-custom">
         <div className="container">
           <a className="title" href="/">
@@ -51,6 +51,30 @@ const NavBar: React.FC<Props> = ({ isLoggedIn, spotifyLoginUrl }) => {
       </nav>
       <style jsx>
         {`
+          .accueil {
+            color:grey;
+            font-size: 20px;
+          }
+          .recherche {
+            color:grey;
+            font-size: 20px;
+          }
+          .bibliotheque {
+            color:grey;
+            font-size: 20px;
+          }
+          .login {
+            font-size: 20px;
+          }
+          .accueil:hover {
+            color:white;
+          }
+          .recherche:hover {
+            color:white;
+          }
+          .bibliotheque:hover {
+            color:white;
+          }
           .title:hover {
             text-decoration: none;
           }
