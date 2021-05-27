@@ -12,12 +12,6 @@ interface Props {
   accessToken: string;
 }
 
-type Album = {
-  id: string;
-  title: string;
-  cover: string;
-};
-
 type Playlists = {
   track: {
     uri: string;
@@ -25,7 +19,6 @@ type Playlists = {
 };
 
 export const play = (accessToken: string, deviceId: string, track: any) => {
-  console.log(track);
   return fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
     method: "PUT",
     headers: {
@@ -46,6 +39,18 @@ export const pause = (accessToken: string, deviceId: string) => {
   });
 };
 
+export const next = (accessToken: string, deviceId: string, ourPlaylist: string) => {
+  return fetch(`https://api.spotify.com/v1/me/player/next?device_id=${deviceId}`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({
+      uris: [ourPlaylist],
+    }),
+  });
+};
+
 const getAlbum = async (accessToken: string, setTargetAlbum: any, setPicturealbum: any) => {
   return await fetch(`https://api.spotify.com/v1/albums/2noRn2Aes5aoNVsU6iWThc`, {
     method: "GET",
@@ -57,7 +62,7 @@ const getAlbum = async (accessToken: string, setTargetAlbum: any, setPicturealbu
     .then((response) => response.json())
     .then((result: any) => {
       const tab: any = [];
-      console.log("kldjfksdhfksdhfksdhk", result);
+      // console.log("kldjfksdhfksdhfksdhk", result);
       setPicturealbum(result.images[1].url);
       result.tracks.items.map((song: any) => tab.push(song.uri));
       setTargetAlbum(tab);
@@ -74,7 +79,7 @@ const getPlaylists = async (accessToken: string, setPlaylist: any, setPicturelis
   })
     .then((response) => response.json())
     .then((play) => {
-      console.log(play);
+      console.log(play.items[3].track.album.name);
       const tab: any = [];
       setPicturelist(play.items[0].track.album.images[1].url);
       play.items.map((song: Playlists) => tab.push(song.track.uri));
@@ -108,7 +113,8 @@ const Player: NextPage<Props> = ({ accessToken }) => {
   const [picturetrack, setPicturetrack] = React.useState("");
   const [picturelist, setPicturelist] = React.useState("");
   const [picturealbum, setPicturealbum] = React.useState("");
-  const [showcard, setShowcard] = React.useState(false);
+  // const [showcard, setShowcard] = React.useState(false);
+  const [nextTrack, setNextTrack] = React.useState("");
 
   React.useEffect(() => {
     const playerStateChanged = (state: SpotifyState) => {
@@ -277,7 +283,12 @@ const Player: NextPage<Props> = ({ accessToken }) => {
                 >
                   {paused ? "play" : "stop"}
                 </button>
-                <button className="skip-button media-button">
+                <button
+                  onClick={() => {
+                    next(accessToken, deviceId, nextTrack);
+                  }}
+                  className="skip-button media-button"
+                >
                   <i className="fas fa-step-forward button-icons"></i>
                   <span className="button-text milli">Skip</span>
                 </button>

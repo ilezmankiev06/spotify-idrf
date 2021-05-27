@@ -107,3 +107,39 @@ export const Layout: React.FC<Props> = ({ children, isLoggedIn, spotifyLoginUrl 
     </>
   );
 };
+
+// export const play = (accessToken: string, deviceId: string, track: any) => {
+//   return fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
+//     method: "PUT",
+//     headers: {
+//       Authorization: `Bearer ${accessToken}`,
+//     },
+//     body: JSON.stringify({
+//       uris: [track],
+//     }),
+//   });
+// };
+
+// export const play = (accessToken: string, deviceId: string, track: any) => {
+//   return fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
+//     method: "PUT",
+//     headers: {
+//       Authorization: `Bearer ${accessToken}`,
+//     },
+//     body: JSON.stringify({
+//       context_uri: "spotify:album:2noRn2Aes5aoNVsU6iWThc",
+//     }),
+//   });
+// };
+
+// export const next = (accessToken: string, deviceId: string) => {
+//   return fetch(`https://api.spotify.com/v1/me/player/next?device_id=${deviceId}`, {
+//     method: "POST",
+//     headers: {
+//       Authorization: `Bearer ${accessToken}`,
+//     },
+//     body: JSON.stringify({
+//       uri: "spotify:album:2noRn2Aes5aoNVsU6iWThc",
+//     }),
+//   });
+// };
