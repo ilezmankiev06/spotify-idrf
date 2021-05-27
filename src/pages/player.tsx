@@ -5,6 +5,7 @@ import useSWR from "swr";
 import { Layout } from "../components/Layout";
 import React from "react";
 import { SpotifyState, SpotifyTrack, SpotifyUser } from "../types/spotify";
+import { table } from "console";
 
 interface Props {
   user: SpotifyUser;
@@ -45,8 +46,8 @@ export const pause = (accessToken: string, deviceId: string) => {
   });
 };
 
-const getAlbum = async (accessToken: string, setTargetAlbum: any) => {
-  return fetch(`https://api.spotify.com/v1/albums/5GAvwptqr4r63i8lZWrL58`, {
+const getAlbum = async (accessToken: string, setTargetAlbum: any, setPicturealbum: any) => {
+  return await fetch(`https://api.spotify.com/v1/albums/2noRn2Aes5aoNVsU6iWThc`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -54,18 +55,16 @@ const getAlbum = async (accessToken: string, setTargetAlbum: any) => {
     },
   })
     .then((response) => response.json())
-    .then((result: SpotifyTrack) => {
-      console.log("kldjfksdhfksdhfksdhk", result.uri);
-      setTargetAlbum(result.uri);
-      // return {
-      //   id: result.id,
-      //   title: result.name,
-      //   cover: result.images,
-      // };
+    .then((result: any) => {
+      const tab: any = [];
+      console.log("kldjfksdhfksdhfksdhk", result);
+      setPicturealbum(result.images[1].url);
+      result.tracks.items.map((song: any) => tab.push(song.uri));
+      setTargetAlbum(tab);
     });
 };
 
-const getPlaylists = async (accessToken: string, setPlaylist: any) => {
+const getPlaylists = async (accessToken: string, setPlaylist: any, setPicturelist: any) => {
   return await fetch("https://api.spotify.com/v1/playlists/3xVCqaHzZ2E67edgUI9w6I/tracks", {
     method: "GET",
     headers: {
@@ -77,12 +76,13 @@ const getPlaylists = async (accessToken: string, setPlaylist: any) => {
     .then((play) => {
       console.log(play);
       const tab: any = [];
+      setPicturelist(play.items[0].track.album.images[1].url);
       play.items.map((song: Playlists) => tab.push(song.track.uri));
       setPlaylist(tab);
     });
 };
 
-export const getTrack = async (accessToken: string, setTrack: any, setPicture: any) => {
+export const getTrack = async (accessToken: string, setTrack: any, setPicturetrack: any) => {
   return await fetch("https://api.spotify.com/v1/tracks/6nQy5XEEEJKu8FE1FS2Wbt", {
     method: "GET",
     headers: {
@@ -92,25 +92,23 @@ export const getTrack = async (accessToken: string, setTrack: any, setPicture: a
   })
     .then((response) => response.json())
     .then((song) => {
-      setPicture(song.album.images[1].url);
+      setPicturetrack(song.album.images[1].url);
       setTrack(song.uri);
     });
 };
 
-const myAlbum: Album = {
-  id: "5GAvwptqr4r63i8lZWrL58",
-  title: "My turn",
-  cover: "https://m.media-amazon.com/images/I/41j+BCAmgOL._SL1000_.jpg",
-};
 const Player: NextPage<Props> = ({ accessToken }) => {
   const { data, error } = useSWR("/api/get-user-info");
   const [paused, setPaused] = React.useState(true);
   const [currentTrack, setCurrentTrack] = React.useState<any>("");
   const [deviceId, player] = useSpotifyPlayer(accessToken);
-  const [targetAlbum, setTargetAlbum] = React.useState(myAlbum);
+  const [targetAlbum, setTargetAlbum] = React.useState([""]);
   const [track, setTrack] = React.useState("");
   const [playlist, setPlaylist] = React.useState([""]);
-  const [picture, setPicture] = React.useState("");
+  const [picturetrack, setPicturetrack] = React.useState("");
+  const [picturelist, setPicturelist] = React.useState("");
+  const [picturealbum, setPicturealbum] = React.useState("");
+  const [showcard, setShowcard] = React.useState(false);
 
   React.useEffect(() => {
     const playerStateChanged = (state: SpotifyState) => {
@@ -136,49 +134,14 @@ const Player: NextPage<Props> = ({ accessToken }) => {
       <div className="d-flex justify-content-evenly">
         <div className="col-2 bg-dark" style={{ height: "44rem" }}>
           <Layout isLoggedIn={true}>
-            <p>Welcome {user && user.display_name}</p>
-            <p>{currentTrack}</p>
-
-            <button
-              onClick={() => {
-                getPlaylists(accessToken, setPlaylist);
-              }}
-            >
-              test
-            </button>
+            <p style={{ color: "white" }}>Welcome {user && user.display_name}</p>
+            <p style={{ color: "white" }}>{currentTrack}</p>
           </Layout>
         </div>
         <div className="col-10">
           <div>
-            <div>
-              <nav className="navbar navbar-laft navbar-custom ">
-                <div className="d-flex justify-content">
-                  <p>
-                    <a href="javascript:history.go(-1)">
-                      <i className="fas fa-chevron-left" style={{ width: "3rem" }}></i>
-                    </a>
-                  </p>
-                  <p>
-                    <a href="javascript:history.go(+1)">
-                      <i className="fas fa-chevron-right" style={{ width: "3rem" }}></i>
-                    </a>
-                  </p>
-                </div>
-              </nav>
-            </div>
-
             <nav className="navbar navbar-laft navbar-custom">
               <div className="d-flex justify-content">
-                <p>
-                  <a href="javascript:history.go(-1)">
-                    <i className="fas fa-chevron-left" style={{ width: "3rem" }}></i>
-                  </a>
-                </p>
-                <p>
-                  <a href="javascript:history.go(+1)">
-                    <i className="fas fa-chevron-right" style={{ width: "3rem" }}></i>
-                  </a>
-                </p>
                 <div className="container-fluid">
                   <form className="d-flex">
                     <input
@@ -195,34 +158,10 @@ const Player: NextPage<Props> = ({ accessToken }) => {
                 </div>
               </div>
             </nav>
-
-            <nav className="navbar navbar-laft navbar-custom">
-              <div className="d-flex justify-content">
-                <p>
-                  <a href="javascript:history.go(-1)">
-                    <i className="fas fa-chevron-left" style={{ width: "3rem" }}></i>
-                  </a>
-                </p>
-                <p>
-                  <a href="javascript:history.go(+1)">
-                    <i className="fas fa-chevron-right" style={{ width: "3rem" }}></i>
-                  </a>
-                </p>
-                <button className="boutton btn btn-outline-success" type="submit" style={{ width: "5rem" }}>
-                  Playlists
-                </button>
-                <button className="boutton btn btn-outline-success" type="submit" style={{ width: "5rem" }}>
-                  Artistes
-                </button>
-                <button className="boutton btn btn-outline-success" type="submit" style={{ width: "5rem" }}>
-                  Albums
-                </button>
-              </div>
-            </nav>
           </div>
           <div className="d-flex justify-content-evenly">
             <div className="card" style={{ width: "18rem" }}>
-              <img src={picture} className="card-img-top" alt="..." />
+              <img src={picturealbum} className="card-img-top" alt="..." />
               <div className="card-body">
                 <p className="card-text">
                   <button
@@ -230,17 +169,55 @@ const Player: NextPage<Props> = ({ accessToken }) => {
                     type="submit"
                     style={{ width: "5rem" }}
                     onClick={() => {
-                      getTrack(accessToken, setTrack, setPicture);
+                      getAlbum(accessToken, setTargetAlbum, setPicturealbum);
                     }}
                   >
-                    {currentTrack}
+                    Album
+                  </button>
+                  {targetAlbum.map((track) => {
+                    return (
+                      <li className="list-unstyled">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          className="bi bi-play"
+                          viewBox="0 0 16 16"
+                          onClick={() => {
+                            play(accessToken, deviceId, track);
+                          }}
+                        >
+                          <path d="M10.804 8 5 4.633v6.734L10.804 8zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696l6.363 3.692z" />
+                        </svg>
+                        {currentTrack}
+                      </li>
+                    );
+                  })}
+                </p>
+              </div>
+            </div>
+            <div className="card" style={{ width: "18rem" }}>
+              <img src={picturetrack} className="card-img-top" alt="..." />
+              <div className="card-body">
+                <p className="card-text">
+                  <button
+                    className="boutton btn btn-outline-success"
+                    type="submit"
+                    style={{ width: "5rem" }}
+                    onClick={() => {
+                      getTrack(accessToken, setTrack, setPicturetrack);
+                    }}
+                  >
+                    Track
+                    {/* {currentTrack} */}
                   </button>
                 </p>
               </div>
             </div>
 
             <div className="card" style={{ width: "18rem" }}>
-              <img src={picture} className="card-img-top" alt="..." />
+              <img src={picturelist} className="card-img-top" alt="..." />
               <div className="card-body">
                 <p className="card-text">
                   <button
@@ -248,22 +225,28 @@ const Player: NextPage<Props> = ({ accessToken }) => {
                     type="submit"
                     style={{ width: "5rem" }}
                     onClick={() => {
-                      getPlaylists(accessToken, setPlaylist);
+                      getPlaylists(accessToken, setPlaylist, setPicturelist);
                     }}
                   >
-                    recuperer playlist
+                    Playlist
                   </button>
                   {playlist.map((track) => {
                     return (
-                      <li>
-                        <button
+                      <li className="list-unstyled">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          className="bi bi-play"
+                          viewBox="0 0 16 16"
                           onClick={() => {
                             play(accessToken, deviceId, track);
                           }}
                         >
-                          {currentTrack}
-                        </button>
-                        {track}
+                          <path d="M10.804 8 5 4.633v6.734L10.804 8zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696l6.363 3.692z" />
+                        </svg>
+                        {currentTrack}
                       </li>
                     );
                   })}
