@@ -96,6 +96,15 @@ export const getTrack = async (accessToken: string, setTrack: any, setPicturetra
       setTrack(song.uri);
     });
 };
+export const Volumes = (accessToken: string, deviceId: string, volume: any) => {
+  console.log(volume);
+  return fetch(`https://api.spotify.com/v1/me/player/volume?volume_percent=${volume}&device_id=${deviceId}`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
 
 const Player: NextPage<Props> = ({ accessToken }) => {
   const { data, error } = useSWR("/api/get-user-info");
@@ -108,7 +117,7 @@ const Player: NextPage<Props> = ({ accessToken }) => {
   const [picturetrack, setPicturetrack] = React.useState("");
   const [picturelist, setPicturelist] = React.useState("");
   const [picturealbum, setPicturealbum] = React.useState("");
-  const [showcard, setShowcard] = React.useState(false);
+  const [volume, setVolume] = React.useState<any>(30);
 
   React.useEffect(() => {
     const playerStateChanged = (state: SpotifyState) => {
@@ -124,6 +133,13 @@ const Player: NextPage<Props> = ({ accessToken }) => {
       }
     };
   }, [player]);
+  React.useEffect(() => {
+    if (volume <= 0) {
+      return setVolume(0);
+    } else if (volume >= 100) {
+      return setVolume(100);
+    }
+  }, [volume]);
 
   if (error) return <div>failed to load</div>;
   if (!data) return <div>loading...</div>;
@@ -287,7 +303,18 @@ const Player: NextPage<Props> = ({ accessToken }) => {
           </div>
         </div>
         <div>
-          <h1>Volume</h1>
+          <div className="text-center d-flex justify-content">
+            <div className="slidecontainer">
+              <h1>Volume</h1>
+
+              <button onClick={() => Volumes(accessToken, deviceId, volume)}>
+                <button onClick={() => setVolume(volume + 10)}>augmente</button>
+              </button>
+              <button onClick={() => Volumes(accessToken, deviceId, volume)}>
+                <button onClick={() => setVolume(volume - 10)}>diminue</button>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
