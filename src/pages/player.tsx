@@ -23,15 +23,15 @@ type Playlists = {
   };
 };
 
-export const play = (accessToken: string, deviceId: string, track: any) => {
-  console.log(track);
+export const play = (accessToken: string, deviceId: string, track: string, nextPrevious: any) => {
+  console.log("tkt demain cest fini :", nextPrevious);
   return fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
     method: "PUT",
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
     body: JSON.stringify({
-      uris: [track],
+      uris: nextPrevious,
     }),
   });
 };
@@ -45,7 +45,25 @@ export const pause = (accessToken: string, deviceId: string) => {
   });
 };
 
-const getAlbum = async (accessToken: string, setTargetAlbum: any, setPicturealbum: any) => {
+export const next = (accessToken: string, deviceId: string) => {
+  return fetch(`https://api.spotify.com/v1/me/player/next?device_id=${deviceId}`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
+
+export const previous = (accessToken: string, deviceId: string) => {
+  return fetch(`https://api.spotify.com/v1/me/player/previous?device_id=${deviceId}`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
+
+const getAlbum = async (accessToken: string, setTargetAlbum: any, setPicturealbum: any, setNextPrevious: any) => {
   return await fetch(`https://api.spotify.com/v1/albums/2noRn2Aes5aoNVsU6iWThc`, {
     method: "GET",
     headers: {
@@ -56,7 +74,7 @@ const getAlbum = async (accessToken: string, setTargetAlbum: any, setPicturealbu
     .then((response) => response.json())
     .then((result: any) => {
       const tab: any = [];
-      console.log("kldjfksdhfksdhfksdhk", result.tracks.items);
+      const tabSong: any = [];
       setPicturealbum(result.images[1].url);
       result.tracks.items.map((song: song) =>
         tab.push({
@@ -65,10 +83,14 @@ const getAlbum = async (accessToken: string, setTargetAlbum: any, setPicturealbu
         }),
       );
       setTargetAlbum(tab);
+      tab.map((toto: any) => {
+        return tabSong.push(toto.uri);
+      });
+      setNextPrevious(tabSong);
     });
 };
 
-const getPlaylists = async (accessToken: string, setPlaylist: any, setPicturelist: any) => {
+const getPlaylists = async (accessToken: string, setPlaylist: any, setPicturelist: any, setNextPrevious: any) => {
   return await fetch("https://api.spotify.com/v1/playlists/3xVCqaHzZ2E67edgUI9w6I/tracks", {
     method: "GET",
     headers: {
@@ -80,6 +102,7 @@ const getPlaylists = async (accessToken: string, setPlaylist: any, setPicturelis
     .then((play) => {
       console.log(play.items);
       const tab: any = [];
+      const tabSongPlaylist: any = [];
       setPicturelist(play.items[0].track.album.images[1].url);
       play.items.map((song: Playlists) =>
         tab.push({
@@ -88,6 +111,10 @@ const getPlaylists = async (accessToken: string, setPlaylist: any, setPicturelis
         }),
       );
       setPlaylist(tab);
+      tab.map((toto: any) => {
+        return tabSongPlaylist.push(toto.uri);
+      });
+      setNextPrevious(tabSongPlaylist);
     });
 };
 
@@ -130,6 +157,7 @@ const Player: NextPage<Props> = ({ accessToken }) => {
   const [navAlbum, setNavAlbum] = React.useState(false);
   const [navTrack, setNavTrack] = React.useState(false);
   const [navPlaylist, setNavPlaylist] = React.useState(false);
+  const [nextPrevious, setNextPrevious] = React.useState("");
 
   const reglageVolume = (value: number) => {
     setVolume(volume + value);
@@ -140,7 +168,7 @@ const Player: NextPage<Props> = ({ accessToken }) => {
     setNavTrack(false);
     setNavAlbum(true);
     setNavPlaylist(false);
-    getAlbum(accessToken, setTargetAlbum, setPicturealbum);
+    getAlbum(accessToken, setTargetAlbum, setPicturealbum, setNextPrevious);
   };
   const reglageNavTrack = () => {
     setNavTrack(true);
@@ -152,7 +180,7 @@ const Player: NextPage<Props> = ({ accessToken }) => {
     setNavTrack(false);
     setNavAlbum(false);
     setNavPlaylist(true);
-    getPlaylists(accessToken, setPlaylist, setPicturelist);
+    getPlaylists(accessToken, setPlaylist, setPicturelist, setNextPrevious);
   };
 
   React.useEffect(() => {
@@ -224,7 +252,7 @@ const Player: NextPage<Props> = ({ accessToken }) => {
                         type="submit"
                         style={{ width: "5rem" }}
                         onClick={() => {
-                          getAlbum(accessToken, setTargetAlbum, setPicturealbum);
+                          getAlbum(accessToken, setTargetAlbum, setPicturealbum, setNextPrevious);
                         }}
                       >
                         Album
@@ -240,7 +268,7 @@ const Player: NextPage<Props> = ({ accessToken }) => {
                               className="bi bi-play"
                               viewBox="0 0 16 16"
                               onClick={() => {
-                                play(accessToken, deviceId, track.uri);
+                                play(accessToken, deviceId, track.uri, nextPrevious);
                               }}
                             >
                               <path d="M10.804 8 5 4.633v6.734L10.804 8zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696l6.363 3.692z" />
@@ -291,7 +319,7 @@ const Player: NextPage<Props> = ({ accessToken }) => {
                         type="submit"
                         style={{ width: "5rem" }}
                         onClick={() => {
-                          getPlaylists(accessToken, setPlaylist, setPicturelist);
+                          getPlaylists(accessToken, setPlaylist, setPicturelist, setNextPrevious);
                         }}
                       >
                         Playlist
@@ -307,7 +335,7 @@ const Player: NextPage<Props> = ({ accessToken }) => {
                               className="bi bi-play"
                               viewBox="0 0 16 16"
                               onClick={() => {
-                                play(accessToken, deviceId, trackname.uri);
+                                play(accessToken, deviceId, trackname.uri, nextPrevious);
                               }}
                             >
                               <path d="M10.804 8 5 4.633v6.734L10.804 8zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696l6.363 3.692z" />
@@ -334,20 +362,30 @@ const Player: NextPage<Props> = ({ accessToken }) => {
               <br />
               <div className="media-buttons d-flex justify-content-evenly">
                 <br />
-                <button className="back-button media-button">
+                <button
+                  onClick={() => {
+                    previous(accessToken, deviceId);
+                  }}
+                  className="back-button media-button"
+                >
                   <i className="fas fa-step-backward button-icons"></i>
-                  <span className="button-text milli">Back</span>
+                  <span className="button-text milli">Previous</span>
                 </button>
                 <button
                   onClick={() => {
-                    paused ? play(accessToken, deviceId, track) : pause(accessToken, deviceId);
+                    paused ? play(accessToken, deviceId, track, nextPrevious) : pause(accessToken, deviceId);
                   }}
                 >
                   {paused ? "play" : "stop"}
                 </button>
-                <button className="skip-button media-button">
+                <button
+                  onClick={() => {
+                    next(accessToken, deviceId);
+                  }}
+                  className="skip-button media-button"
+                >
                   <i className="fas fa-step-forward button-icons"></i>
-                  <span className="button-text milli">Skip</span>
+                  <span className="button-text milli">Next</span>
                 </button>
                 <br />
               </div>
@@ -358,10 +396,10 @@ const Player: NextPage<Props> = ({ accessToken }) => {
           <div className="text-center-right d-flex justify-content">
             <div className="slidecontainer">
               <h1 className="text-volume">Volume: {volume}%</h1>
-              <button className="buttonVolume" onClick={() => reglageVolume(10)}>
-                plus
+              <button className="buttonVolume" onClick={() => reglageVolume(-10)}>
+                moins
               </button>
-              <button onClick={() => reglageVolume(-10)}>moins</button>
+              <button onClick={() => reglageVolume(10)}>plus</button>
             </div>
           </div>
         </div>
