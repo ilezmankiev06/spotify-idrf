@@ -24,7 +24,6 @@ type Playlists = {
 };
 
 export const play = (accessToken: string, deviceId: string, track: string, nextPrevious: any) => {
-  console.log("tkt demain cest fini :", nextPrevious);
   return fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
     method: "PUT",
     headers: {
@@ -100,7 +99,6 @@ const getPlaylists = async (accessToken: string, setPlaylist: any, setPicturelis
   })
     .then((response) => response.json())
     .then((play) => {
-      console.log(play.items);
       const tab: any = [];
       const tabSongPlaylist: any = [];
       setPicturelist(play.items[0].track.album.images[1].url);
@@ -214,7 +212,7 @@ const Player: NextPage<Props> = ({ accessToken }) => {
       <div className="bodyNavBar d-flex justify-content-evenly">
         <div className="all-sidebar col-2" style={{ height: "44rem" }}>
           <Layout isLoggedIn={true}>
-            <p style={{ color: "white" }}>Welcome {user && user.display_name}</p>
+            <p style={{ color: "white" }}> Hello {user && user.display_name}</p>
             {/* <p style={{ color: "white" }}>{currentTrack}</p> */}
           </Layout>
         </div>
@@ -222,16 +220,26 @@ const Player: NextPage<Props> = ({ accessToken }) => {
           <div>
             <nav className="navbar navbar-laft navbar-custom">
               <div className="d-flex justify-content">
-                <div className="container-fluid">
+                <div className="navOfBody container-fluid">
                   <form className="d-flex">
                     <input
                       className="form-control me-2"
                       type="search"
                       placeholder="Artites, titres ou albums"
                       aria-label="Search"
-                      style={{ width: "30rem" }}
+                      style={{ width: "20rem" }}
                     />
-                    <button className="btn btn-outline-success" type="submit">
+                    <button
+                      className="btn btn-outline-success"
+                      type="submit"
+                      style={{
+                        backgroundColor: "black",
+                        color: "white",
+                        padding: "10px 10px",
+                        whiteSpace: "nowrap",
+                        width: "100px",
+                      }}
+                    >
                       Search
                     </button>
                   </form>
@@ -239,27 +247,29 @@ const Player: NextPage<Props> = ({ accessToken }) => {
               </div>
             </nav>
           </div>
-          <div className="col d-flex justify-content-around">
+          <div className="col d-flex justify-content-around text-center">
             <div className="column">
-              <button onClick={() => reglageNavAlbum()}>Album</button>
+              <button
+                onClick={() => reglageNavAlbum()}
+                style={{
+                  backgroundColor: "black",
+                  color: "white",
+                  padding: "10px 10px",
+                  whiteSpace: "nowrap",
+                  width: "100px",
+                }}
+                className="btn btn-dark"
+              >
+                Album
+              </button>
               {navAlbum ? (
                 <div className="card" style={{ width: "18rem" }}>
                   <img src={picturealbum} className="card-img-top" alt="..." />
                   <div className="card-body">
                     <p className="card-text">
-                      <button
-                        className="boutton btn btn-outline-success"
-                        type="submit"
-                        style={{ width: "5rem" }}
-                        onClick={() => {
-                          getAlbum(accessToken, setTargetAlbum, setPicturealbum, setNextPrevious);
-                        }}
-                      >
-                        Album
-                      </button>
                       {targetAlbum.map((track: song) => {
                         return (
-                          <li className="listMusique list-unstyled">
+                          <li className="listMusique list-unstyled" key={track.uri}>
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               width="16"
@@ -284,49 +294,51 @@ const Player: NextPage<Props> = ({ accessToken }) => {
             </div>
 
             <div className="column">
-              <button onClick={() => reglageNavTrack()}>track</button>
+              <button
+                className="btn btn-dark"
+                onClick={() => reglageNavTrack()}
+                style={{
+                  backgroundColor: "black",
+                  color: "white",
+                  padding: "10px 10px",
+                  whiteSpace: "nowrap",
+                  width: "100px",
+                }}
+              >
+                Track
+              </button>
               {navTrack ? (
                 <div className="card" style={{ width: "18rem" }}>
                   <img src={picturetrack} className="card-img-top" alt="..." />
                   <div className="card-body">
-                    <p className="card-text">
-                      <button
-                        className="boutton btn btn-outline-success"
-                        type="submit"
-                        style={{ width: "15rem" }}
-                        onClick={() => {
-                          getTrack(accessToken, setTrack, setPicturetrack);
-                        }}
-                      >
-                        Track
-                        <p>{currentTrack}</p>
-                      </button>
-                    </p>
+                    <p className="card-text">{currentTrack}</p>
                   </div>
                 </div>
               ) : null}
             </div>
 
             <div className="column">
-              <button onClick={() => reglageNavPlaylist()}>Playlist</button>
+              <button
+                onClick={() => reglageNavPlaylist()}
+                style={{
+                  backgroundColor: "black",
+                  color: "white",
+                  padding: "10px 10px",
+                  whiteSpace: "nowrap",
+                  width: "100px",
+                }}
+                className="btn btn-dark"
+              >
+                Playlist
+              </button>
               {navPlaylist ? (
                 <div className="card" style={{ width: "18rem" }}>
                   <img src={picturelist} className="card-img-top" alt="..." />
                   <div className="card-body">
                     <p className="card-text">
-                      <button
-                        className="boutton btn btn-outline-success"
-                        type="submit"
-                        style={{ width: "5rem" }}
-                        onClick={() => {
-                          getPlaylists(accessToken, setPlaylist, setPicturelist, setNextPrevious);
-                        }}
-                      >
-                        Playlist
-                      </button>
                       {playlist.map((trackname: song) => {
                         return (
-                          <li className="list-unstyled">
+                          <li className="list-unstyled" key={trackname.uri}>
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               width="16"
@@ -354,7 +366,8 @@ const Player: NextPage<Props> = ({ accessToken }) => {
       </div>
       <div className="body d-flex justify-content">
         <div className="titre" style={{ width: "15rem" }}>
-          <h1 className="titre-musique">{currentTrack}</h1>
+          <br />
+          <h3 className="titre-musique">{currentTrack}</h3>
         </div>
         <div className="milieu" style={{ width: "60rem" }}>
           <div className="text-center" style={{ height: "5.5rem" }}>
@@ -366,26 +379,65 @@ const Player: NextPage<Props> = ({ accessToken }) => {
                   onClick={() => {
                     previous(accessToken, deviceId);
                   }}
-                  className="back-button media-button"
+                  className="btn btn-dark"
                 >
-                  <i className="fas fa-step-backward button-icons"></i>
-                  <span className="button-text milli">Previous</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="30"
+                    height="30"
+                    fill="currentColor"
+                    className="bi bi-skip-start-circle-fill"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM9.71 5.093 7 7.028V5.5a.5.5 0 0 0-1 0v5a.5.5 0 0 0 1 0V8.972l2.71 1.935a.5.5 0 0 0 .79-.407v-5a.5.5 0 0 0-.79-.407z" />
+                  </svg>
                 </button>
                 <button
+                  className="btn btn-primary"
                   onClick={() => {
                     paused ? play(accessToken, deviceId, track, nextPrevious) : pause(accessToken, deviceId);
                   }}
                 >
-                  {paused ? "play" : "stop"}
+                  {paused ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="30"
+                      height="30"
+                      fill="currentColor"
+                      className="bi bi-play-circle-fill"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM6.79 5.093A.5.5 0 0 0 6 5.5v5a.5.5 0 0 0 .79.407l3.5-2.5a.5.5 0 0 0 0-.814l-3.5-2.5z" />
+                    </svg>
+                  ) : (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="30"
+                      height="30"
+                      fill="currentColor"
+                      className="bi bi-stop-circle-fill"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM6.5 5A1.5 1.5 0 0 0 5 6.5v3A1.5 1.5 0 0 0 6.5 11h3A1.5 1.5 0 0 0 11 9.5v-3A1.5 1.5 0 0 0 9.5 5h-3z" />
+                    </svg>
+                  )}
                 </button>
                 <button
                   onClick={() => {
                     next(accessToken, deviceId);
                   }}
-                  className="skip-button media-button"
+                  className="btn btn-dark"
                 >
-                  <i className="fas fa-step-forward button-icons"></i>
-                  <span className="button-text milli">Next</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="30"
+                    height="30"
+                    fill="currentColor"
+                    className="bi bi-skip-end-circle-fill"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM6.79 5.093A.5.5 0 0 0 6 5.5v5a.5.5 0 0 0 .79.407L9.5 8.972V10.5a.5.5 0 0 0 1 0v-5a.5.5 0 0 0-1 0v1.528L6.79 5.093z" />
+                  </svg>
                 </button>
                 <br />
               </div>
@@ -394,12 +446,15 @@ const Player: NextPage<Props> = ({ accessToken }) => {
         </div>
         <div>
           <div className="text-center-right d-flex justify-content">
-            <div className="slidecontainer">
-              <h1 className="text-volume">Volume: {volume}%</h1>
+            <div className="container">
+              <br />
               <button className="buttonVolume" onClick={() => reglageVolume(-10)}>
-                moins
+                <i className="fas fa-volume-down"></i>
               </button>
-              <button onClick={() => reglageVolume(10)}>plus</button>
+              <button className="buttonVolume" onClick={() => reglageVolume(10)}>
+                <i className="fas fa-volume-up"></i>
+              </button>
+              <h1 className="text-volume">Volume: {volume}%</h1>
             </div>
           </div>
         </div>
@@ -412,8 +467,9 @@ const Player: NextPage<Props> = ({ accessToken }) => {
           background-color: #181818;
         }
         .buttonVolume {
+          width: 2rem;
           margin-right: 1rem;
-          margin-left: 1rem;
+          border-radius: 15px;
         }
         .card-text {
           overflow: scroll;
@@ -421,13 +477,14 @@ const Player: NextPage<Props> = ({ accessToken }) => {
         }
         .titre-musique {
           color: white;
-          font-size: 30px;
+          font-size: 20px;
           overflow: scroll;
           max-height: 4.5rem;
+          margin-left: 2rem;
         }
         .text-volume {
           color: white;
-          font-size: 30px;
+          font-size: 20px;
         }
         .all-sidebar {
           background-color: black;
