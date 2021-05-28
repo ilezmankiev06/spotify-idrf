@@ -12,9 +12,10 @@ const NavBar: React.FC<Props> = ({ isLoggedIn, spotifyLoginUrl }) => {
       <nav className="sidebar navbar-expand-lg navbar-custom">
         <div className="container">
           <a className="title" href="/">
-            <h1 className="white" style={{ color: "white" }}>
+            <h2 className="white" style={{ color: "white" }}>
+              <br />
               <i className="fab fa-spotify"></i>Spotify
-            </h1>
+            </h2>
           </a>
           <br />
           <p>
@@ -32,18 +33,21 @@ const NavBar: React.FC<Props> = ({ isLoggedIn, spotifyLoginUrl }) => {
               <i className="fas fa-list"></i> Bibliothèque
             </a>
           </p>
+          <br />
+          <div style={{ borderTop: "1px solid grey ", marginLeft: 5, marginRight: 20 }}></div>
+          <br />
           {isLoggedIn ? (
             <>
               <p>
                 <a className="login" href="/api/logout">
-                  logout
+                  Logout
                 </a>
               </p>
             </>
           ) : (
             <p>
               <a className="login" href={spotifyLoginUrl}>
-                login
+                Login
               </a>
             </p>
           )}
@@ -52,28 +56,28 @@ const NavBar: React.FC<Props> = ({ isLoggedIn, spotifyLoginUrl }) => {
       <style jsx>
         {`
           .accueil {
-            color:grey;
-            font-size: 20px;
+            color: grey;
+            font-size: 15px;
           }
           .recherche {
-            color:grey;
-            font-size: 20px;
+            color: grey;
+            font-size: 15px;
           }
           .bibliotheque {
-            color:grey;
-            font-size: 20px;
+            color: grey;
+            font-size: 15px;
           }
           .login {
-            font-size: 20px;
+            font-size: 15px;
           }
           .accueil:hover {
-            color:white;
+            color: white;
           }
           .recherche:hover {
-            color:white;
+            color: white;
           }
           .bibliotheque:hover {
-            color:white;
+            color: white;
           }
           .title:hover {
             text-decoration: none;
